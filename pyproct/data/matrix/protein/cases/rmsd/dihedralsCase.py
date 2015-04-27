@@ -5,7 +5,7 @@ Created on 08/07/2014
 """
 import numpy
 from pyRMSD.condensedMatrix import CondensedMatrix
-import pyproct.tools.mathTools as mathTools 
+import pyproct.tools.mathTools as mathTools
 
 class DihedralRMSDBuilder(object):
     """
@@ -16,12 +16,12 @@ class DihedralRMSDBuilder(object):
         """
         pass
 
-    
+
     @classmethod
     def build(cls, structure_data):
         print "Calculating dihedral RMSD matrix.  This may take some time ..."
         all_dihedrals = []
-        num_conformations = structure_data.get_num_elements()
+        num_conformations = structure_data.get_number_of_elements()
         for i in range(num_conformations):
             all_dihedrals.append(structure_data.get_dihedrals_for_conformation(i))
 
