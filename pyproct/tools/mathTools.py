@@ -15,7 +15,7 @@ def to_0_2PI_range(angle):
     """
     Converts an angle from the  [-pi, pi] range to the [0, 2pi] range.
     :param angle: The angle to be converted.
-    
+
     :return: The converted angle in [-pi, pi] range.
     """
     if angle >= 0 :
@@ -28,8 +28,8 @@ def angular_increment(angle1, angle2):
 
 def angular_distance(angle1, angle2):
     """
-    angle1, angle2 , angles in -pi, pi range. 
-    
+    angle1, angle2 , angles in -pi, pi range.
+
     Returns the angular increment defined by these angles.
     """
     return min(abs(angle1-angle2), abs(to_0_2PI_range(angle1)-to_0_2PI_range(angle2)))
@@ -39,7 +39,7 @@ def calc_dihedral(a1_coords, a2_coords, a3_coords, a4_coords):
     xb, yb, zb = a2_coords
     xc, yc, zc = a3_coords
     xd, yd, zd = a4_coords
-    
+
     v1 = xc-xd
     v2 = yb-yc
     v3 = xb-xc
@@ -60,4 +60,3 @@ def calc_dihedral(a1_coords, a2_coords, a3_coords, a4_coords):
     v18 = 1/math.sqrt(pow(v5,2)+pow(v17,2)+pow(v16,2))
 
     return math.atan2((v13*v14*v11*v10-v8*v2*v13*v14)*v18*v17+(v3*v8*v13*v14-v13*v14*v12*v10)*v18*v16+v5*(v2*v13*v14*v12-v3*v13*v14*v11)*v18,v13*v12*v18*v17+v13*v11*v18*v16+v8*v5*v13*v18)
-     

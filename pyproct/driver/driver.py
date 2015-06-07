@@ -29,7 +29,7 @@ class Driver(Observable):
             self.save_parameters_file(parameters)
 
             if "data" in parameters:
-                self.data_handler, self.matrix_handler = DataDriver.run(parameters["data"],
+                self.data_handler, self.matrix_handler = DataDriver.data_driver_run(parameters["data"],
                                                                         self.workspaceHandler,
                                                                         Driver.timer,
                                                                         self.generatedFiles)
@@ -74,8 +74,8 @@ class Driver(Observable):
     def perform_clustering_exploration(self, parameters):
         best_clustering = None
 
-        clustering_results = ClusteringProtocol(Driver.timer, 
-                                                self.observer).run(parameters, 
+        clustering_results = ClusteringProtocol(Driver.timer,
+                                                self.observer).run(parameters,
                                                                    self.matrix_handler,
                                                                    self.data_handler,
                                                                    self.workspaceHandler)
@@ -144,18 +144,19 @@ class Driver(Observable):
         if parameters["clustering"]["generation"]["method"] != "load":
             print "- Chosen cluster:"
             print "\t- Used algorithm: ", best_clustering['type']
-            
+
             if 'Number of clusters' in best_clustering['evaluation']:
                 print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
-            
+
             if 'Mean cluster size' in best_clustering['evaluation']:
                 print "\t- Mean cluster size: ", best_clustering['evaluation']['Mean cluster size']
-            
+
             if 'Noise level' in best_clustering['evaluation']:
                 print "\t- Noise: %.2f %%"%best_clustering['evaluation']['Noise level']
-            
+
             print "\t- Quality function results: "
             for qual_func in best_clustering['evaluation']:
                 if not qual_func in ['Number of clusters','Noise level', 'Mean cluster size'] and not "Normalized_" in qual_func:
-                    print "\t\t- %s: %f"%(qual_func, best_clustering['evaluation'][qual_func])
+                    print "Type[%s], Value[%s]" % (type(best_clustering['evaluation'][qual_func]), best_clustering['evaluation'][qual_func])
+                    print "\t\t- %s: %s"%(qual_func, best_clustering['evaluation'][qual_func])
         print "======================="

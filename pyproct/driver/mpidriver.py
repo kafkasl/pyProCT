@@ -28,19 +28,19 @@ class MPIDriver(Driver):
 
         with MPIWorkspaceHandler(self.rank, 0, parameters["global"]["workspace"], self.observer) as self.workspaceHandler:
             self.comm.Barrier()
-            
+
             if self.rank == 0:
                 self.save_parameters_file(parameters)
 
             if "data" in parameters:
-                self.data_handler, self.matrix_handler = MPIDataDriver.run( self.rank,
+                self.data_handler, self.matrix_handler = MPIDataDriver.data_driver_run( self.rank,
                                                                             self.comm,
                                                                             parameters["data"],
                                                                             self.workspaceHandler,
                                                                             Driver.timer,
                                                                             self.generatedFiles)
                 self.comm.Barrier()
-                
+
                 if "clustering" in parameters:
                     clustering_results = self.clustering_section(parameters)
                     self.comm.Barrier()

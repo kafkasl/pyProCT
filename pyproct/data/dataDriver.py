@@ -17,7 +17,7 @@ class DataDriver(object):
         pass
 
     @classmethod
-    def run(cls, parameters, workspace_handler, timer, generated_files):
+    def data_driver_run(cls, parameters, workspace_handler, timer, generated_files):
         DataDriver.timer = timer
 
         data_handler = cls.load_data(parameters)
