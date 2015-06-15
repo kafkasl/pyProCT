@@ -16,12 +16,13 @@ class SourceGenerator(object):
     """
     def __init__(self, source_list):
         self.source_list = [DataSource(source) for source in SourceGenerator.inflate_source_list(source_list)]
-        
+
     @classmethod
-    def inflate_source_list(cls, source_list):    
+    def inflate_source_list(cls, source_list):
         inflated_list = []
+        print "Inflate source list = %s" % source_list
         for source in source_list:
-            
+
             if isinstance(source, basestring):
                 # is string-like
                 _, ext = os.path.splitext(source)
@@ -42,40 +43,43 @@ class SourceGenerator(object):
                 # is dict-like
                 inflated_list.extend(cls.get_sources_from_dictionary(source))
         return inflated_list
-    
+
     @classmethod
     def do_glob(cls, path):
         paths = glob.glob(path)
+        print "Do_glob [path] : %s" % path
         if len(paths) > 0:
+            print "Returning paths"
             return paths
         else:
             print "[ERROR SourceGenerator::init] Impossible to find one or all of this files: %s"%path
             exit()
-    
-    @classmethod                
+
+    @classmethod
     def get_sources_from_file_list(cls, list_file):
         """
         Gets the sources from a ".lst" file. Each line of this file describes a source using:
             - A single string: the source path.
             - A json object with at least a "source" keyword with the source path.
-        
+
         :param list_file: The path of the list file.
-        
-        :return: An array with the contents of the file (strings and dictionaries) 
+
+        :return: An array with the contents of the file (strings and dictionaries)
         """
         return [convert_to_utf8(json.loads(line)) for line in open(list_file,"r")]
-    
+
     @classmethod
     def get_sources_from_dictionary(cls, info_dict):
         """
         If a dictionary source string is a glob and can be inflated, creates a dictionary copy
         with a different "source" key contents.
-        
-        :param info_dict: A dictionary with at least "source" keyword. 
-        
+
+        :param info_dict: A dictionary with at least "source" keyword.
+
         :return: An array with the same array or more in case it was inflated.
         """
         inflated_dics = []
+        print "get_sources_from_dictionary [info_dict]= %s" % info_dict
         for path in cls.do_glob(info_dict["source"]):
             clone = copy.deepcopy(info_dict)
             clone["source"] = path

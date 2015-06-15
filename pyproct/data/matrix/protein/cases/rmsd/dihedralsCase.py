@@ -30,6 +30,7 @@ class DihedralRMSDBuilder(object):
         for i in range(num_conformations-1):
             dihedrals_i = all_dihedrals[i]
             for j in range(i+1, num_conformations):
+                print "Dihedrals_i: %s \nAll dihedrals[j] :%s" % (dihedrals_i,all_dihedrals[j])
                 data.append(mathTools.angular_rmsd(dihedrals_i,all_dihedrals[j]))
         return CondensedMatrix(numpy.array(data))
 

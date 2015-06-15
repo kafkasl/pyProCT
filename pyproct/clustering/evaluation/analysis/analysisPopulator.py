@@ -63,7 +63,7 @@ class AnalysisPopulator(object):
 
         self.all_possible_analysis["Compactness"] = Analysis("Compactness", self.evaluate_with_calculator,
                                                                     {"class":CompactnessCalculator,"matrix":distance_matrix})
-        
+
         self.all_possible_analysis["Separation"] = Analysis("Separation", self.evaluate_with_calculator,
                                                             {"class":SeparationCalculator,"matrix":distance_matrix})
 
@@ -75,10 +75,10 @@ class AnalysisPopulator(object):
 
         self.all_possible_analysis["Calinski-Harabasz"] = Analysis("Calinski-Harabasz", self.evaluate_with_calculator,
                                                                    {"class":CalinskiHarabaszCalculator,"matrix":distance_matrix})
-        
+
         self.all_possible_analysis["Dunn"] = Analysis("Dunn", self.evaluate_with_calculator,
                                                       {"class":DunnCalculator,"matrix":distance_matrix})
-        
+
         self.all_possible_analysis["Davies-Bouldin"] = Analysis("Davies-Bouldin", self.evaluate_with_calculator,
                                                                 {"class":DaviesBouldinCalculator,"matrix":distance_matrix})
 

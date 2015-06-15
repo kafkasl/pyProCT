@@ -12,7 +12,7 @@ class ProteinEnsembleData(Data):
     Holds a protein ensemble with ALL conformations and helps to handle it (selections etc...).
     TODO: Methods to lowercase.
     """
-    
+
     def __init__(self,  structure_ensemble, model_numbers, model_remarks, selection_params):
         # Add number of elements to data instead of handler
         self.structure_ensemble = structure_ensemble
@@ -22,7 +22,7 @@ class ProteinEnsembleData(Data):
 
     def get_element(self, element_id):
         """
-        We must override this guy. In this case the behaviour is to obtain a 
+        We must override this guy. In this case the behaviour is to obtain a
         full Prody structure.
         """
         element_coordinates = self.structure_ensemble.getCoordsets()[element_id]
@@ -30,7 +30,7 @@ class ProteinEnsembleData(Data):
         removeAllCoordsetsFromStructure(structure)
         structure.addCoordset(element_coordinates)
         return structure
-    
+
     def get_elements(self, elements_list):
         """
         When we work with ensembles it is better to return a single prody ensemble with all
@@ -43,27 +43,27 @@ class ProteinEnsembleData(Data):
         for coordset in element_coordinates:
             structure.addCoordset(coordset)
         return structure
-    
+
     def get_all_elements(self):
         """
         """
         return self.structure_ensemble
-    
+
     def get_number_of_elements(self):
         return self.structure_ensemble.numCoordsets()
-    
+
     def getSelection(self, selection_string):
         """
         Returns a Prody modifiable selection (is a copy).
         """
         return self.structure_ensemble.select(selection_string).copy()
-    
+
     def getCoordinates(self):
         """
         Returns all the coordinates of the ensemble.
         """
         return self.getSelection("all").getCoordsets()
-    
+
     def getSelectionCoordinates(self, selection_string):
         """
         Returns the coordinates of an arbitrary selection.
@@ -87,7 +87,7 @@ class ProteinEnsembleData(Data):
             return self.getSelectionCoordinates(self.calculation_selection)
         else:
             return None
-    
+
     def handle_selection_parameters(self, selection_parameters):
         """
         Helper funtion to handle selection parameters (different parameter names can have almost the same
@@ -109,16 +109,16 @@ class ProteinEnsembleData(Data):
 
         if "body_selection" in selection_parameters:
             self.calculation_selection = selection_parameters["body_selection"]
-        
+
         # If both selections are the sa
         if self.fitting_selection == self.calculation_selection:
-            self.calculation_selection = None 
-        
+            self.calculation_selection = None
+
     def get_dihedrals_for_conformation(self, conformation):
         coordsets = self.structure_ensemble.getCoordsets()
-        
+
         self.structure_ensemble.setCoords(coordsets[conformation])
-        
+
         dihedral_angles = []
         for residue in self.structure_ensemble.iterResidues():
             try:
@@ -133,9 +133,9 @@ class ProteinEnsembleData(Data):
 
         # 0 links with Nth residue and Nth with 0th. Those values are not needed anyway.
         return dihedral_angles[1:-1]
-    
+
     def get_all_remarks(self):
         return self.model_remarks
-    
+
     def get_all_model_numbers(self):
         return self.model_numbers

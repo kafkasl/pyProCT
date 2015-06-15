@@ -3,6 +3,7 @@ Created on 04/02/2013
 
 @author: victor
 """
+
 import optparse
 import threading
 import pyproct
@@ -33,6 +34,7 @@ class CmdLinePrinter(threading.Thread):
             self.data_source.clear()
 
 if __name__ == '__main__':
+    print "STARTING pyProCT"
     parser = optparse.OptionParser(usage='%prog [--mpi] [--print] script', version=pyproct.__version__)
 
     parser.add_option('--mpi', action="store_true",  dest = "use_mpi", help="Add this flag if you want to use MPI-based scheduling.")
