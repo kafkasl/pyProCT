@@ -12,6 +12,9 @@ from pyproct.clustering.clustering import Clustering
 from pyproct.clustering.protocol.protocol import ClusteringProtocol
 from pyproct.postprocess.postprocessingDriver import PostprocessingDriver
 from pyproct.data.dataDriver import DataDriver
+from pyproct.tools.tracer import Tracer
+import multiprocessing
+
 
 class Driver(Observable):
     timer = TimerHandler()
@@ -26,17 +29,29 @@ class Driver(Observable):
         Driver's main function.
         """
         with WorkspaceHandler(parameters["global"]["workspace"], self.observer) as self.workspaceHandler:
+            name = multiprocessing.current_process().name
+            if name == "MainProcess":
+                slot = 0
+            else:
+                slot = name[12:]
+            print "NAME %s " % multiprocessing.current_process().name
+            print "SLOT %s" % slot
             self.save_parameters_file(parameters)
-
+            Tracer.emit(slot, 0, 800000)
             if "data" in parameters:
+                Tracer.emit(slot, 2, 800000)
                 self.data_handler, self.matrix_handler = DataDriver.data_driver_run(parameters["data"],
                                                                         self.workspaceHandler,
                                                                         Driver.timer,
                                                                         self.generatedFiles)
-
+                Tracer.emit(slot, 0, 800000)
                 if "clustering" in parameters:
+                    Tracer.emit(slot, 3, 800000)
                     clustering_results = self.clustering_section(parameters)
+                    Tracer.emit(slot, 0, 800000)
+                    Tracer.emit(slot, 4, 800000)
                     self.postprocess(parameters, clustering_results)
+                    Tracer.emit(slot, 0, 800000)
                     self.save_results(clustering_results)
                     self.show_summary(parameters, clustering_results)
                     return self.get_best_clustering(clustering_results)

@@ -12,6 +12,8 @@ from pyproct.driver.parameters import ProtocolParameters
 from pyproct.driver.observer.observer import Observer
 from pyproct.driver.driver import Driver
 import pyproct.tools.commonTools as tools
+from pyproct.tools.tracer import Tracer
+import multiprocessing
 
 class CmdLinePrinter(threading.Thread):
 
@@ -35,6 +37,12 @@ class CmdLinePrinter(threading.Thread):
 
 if __name__ == '__main__':
     print "STARTING pyProCT"
+    name = multiprocessing.current_process().name
+    if name == "MainProcess":
+        slot = 0
+    else:
+        slot = name[12:]
+    Tracer.emit(slot, 1, 800000)
     parser = optparse.OptionParser(usage='%prog [--mpi] [--print] script', version=pyproct.__version__)
 
     parser.add_option('--mpi', action="store_true",  dest = "use_mpi", help="Add this flag if you want to use MPI-based scheduling.")
