@@ -22,15 +22,15 @@ class CompssTask(object):
         self.kwargs = kwargs
         self.result = None
 
-    @task(returns=int)
+    @task(returns=tuple)
     def task_run(self):
         print "STARTING TASK"
 
-        from pyRMSD.condensedMatrix import CondensedMatrix
-        if module_exists("CondensedMatrix"):
-            print "Module exists"
-        else:
-            print "Module not exists"
+        # from pyRMSD.condensedMatrix import CondensedMatrix
+        # if module_exists("CondensedMatrix"):
+        #     print "Module exists"
+        # else:
+        #     print "Module not exists"
 
         # args = zip(self.kwargs.keys(), self.kwargs.values())
         print "Task arguments : %s\n" % self.kwargs.keys()
@@ -114,6 +114,7 @@ class CompssRunner(object):
         @param function_kwargs: Its arguments.
         @param description: A brief description of the task.
         """
+        print "Adding task %s\n\tTarget function %s\n\tkwargs: %s\n\tDescription %s" % (task_name, target_function, function_kwargs, description)
 
         if not task_name in self.tasks:
             task = CompssTask( name = task_name, description = description, function = target_function, kwargs=function_kwargs)
