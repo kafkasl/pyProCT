@@ -17,10 +17,13 @@ class CompssTask(object):
         @param kkwargs: Parameters for the callable.
         # @param description: A short description of what the task does. Can be empty.
         """
+        kwargs.get('algorithm').pickle_condensed_matrix()
         self.function = function
         self.name = name
         self.kwargs = kwargs
         self.result = None
+        print "\n%s\n" % kwargs.get('algorithm')
+
 
     @task(returns=tuple)
     def task_run(self):
@@ -114,7 +117,6 @@ class CompssRunner(object):
         @param function_kwargs: Its arguments.
         @param description: A brief description of the task.
         """
-        print "Adding task %s\n\tTarget function %s\n\tkwargs: %s\n\tDescription %s" % (task_name, target_function, function_kwargs, description)
 
         if not task_name in self.tasks:
             task = CompssTask( name = task_name, description = description, function = target_function, kwargs=function_kwargs)

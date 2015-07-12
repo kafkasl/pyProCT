@@ -265,3 +265,7 @@ class KMedoidsAlgorithm(object):
                 medoids.append(c.prototype)
             return medoids
 
+
+    def pickle_condensed_matrix(self):
+        self.condensed_matrix = None
+
