@@ -11,6 +11,9 @@ from pyproct.clustering.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlg
 from pyproct.clustering.algorithms.random.RandomAlgorithm import RandomClusteringAlgorithm
 from pyproct.clustering.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
 
+from pyproct.tools.compssRunner import CompssTask
+from pycompss.api.task import task
+
 def run_algorithm(algorithm, algorithm_kwargs, clustering_id):
     """
     This function launches an execution of one clustering algorithm with its parameters. Used mainly to be
@@ -42,7 +45,7 @@ class ClusteringExplorer(Observable):
                 "hierarchical": HierarchicalClusteringAlgorithm
         }
 
-    def __init__(self, parameters, matrix_handler, workspace_handler, scheduler, parameters_generator, observer = None):
+    def __init__(self, parameters, matrix_handler, workspace_handler, parameters_generator, observer = None):
         """
         Class creator.
 
@@ -63,11 +66,11 @@ class ClusteringExplorer(Observable):
 
         self.matrix_handler = matrix_handler
         self.workspace_handler = workspace_handler
+        self.parameters = parameters
         self.clustering_parameters = parameters["clustering"]
         self.evaluation_parameters = parameters["clustering"]["evaluation"]
         self.current_clustering_id = 0
         self.parameters_generator = parameters_generator
-        self.scheduler = scheduler
 
     def run(self):
         """
@@ -85,11 +88,13 @@ class ClusteringExplorer(Observable):
 
         # Generate all clustering + info structures
         clusterings_info = {}
+        clusterings = []
         for algorithm_type in used_algorithms:
-            clusterings_info = dict(clusterings_info.items() + self.schedule_algorithm(algorithm_type).items())# append elements to a dict
+            c_info, result = self.schedule_algorithm(algorithm_type)
 
-        # Wait until all processes have finished
-        clusterings = self.scheduler.run()
+            clusterings_info = dict(clusterings_info.items() + c_info.items())# append elements to a dict
+            clusterings.append(result)
+
 
         for c in clusterings:
             compss_wait_on(c)
@@ -128,23 +133,29 @@ class ClusteringExplorer(Observable):
         clusterings_info =  self.generate_clustering_info(algorithm_type, algorithm_run_params, clusterings)
 
         # Sometimes getting the best parameters imply getting the clusterings themselves
+        results = []
         if clusterings == []:
             for clustering_id in clusterings_info:
                 one_clustering_info = clusterings_info[clustering_id]
 
-                self.scheduler.add_task( task_name = clustering_id,
-                                         description = "Generation of clustering with %s algorithm and id %s"%(
-                                                                                    one_clustering_info["type"],
-                                                                                    clustering_id
-                                                                                    ),
-                                          target_function = run_algorithm,
-                                          function_kwargs = {
-                                                       "algorithm":algorithm,
-                                                       "clustering_id":clustering_id,
-                                                       "algorithm_kwargs":one_clustering_info["parameters"]
-                                                       },
-                                          dependencies = {})
-        return clusterings_info
+                result = CompssTask(name = clustering_id,
+                            matrix_data = self.matrix_handler.distance_matrix.get_data(),
+                            description = "Generation of clustering with %s \
+                                          algorithm and id %s"%(one_clustering_info["type"], clustering_id),
+                            function = run_algorithm,
+                            parameters = self.parameters,
+                            kwargs = {
+                                       "algorithm":algorithm,
+                                       "clustering_id":clustering_id,
+                                       "algorithm_kwargs":one_clustering_info["parameters"]
+                                       }).task_run()
+                # from pycompss.api.api import compss_wait_on
+
+                # compss_wait_on(result)
+                # print "Compss Task result: \n%s" % result
+                results.append(result)
+
+        return clusterings_info, results
 
     def generate_clustering_info(self, algorithm_type, clustering_parameters, clusterings = []):
         """

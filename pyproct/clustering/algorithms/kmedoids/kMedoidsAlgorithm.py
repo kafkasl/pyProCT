@@ -45,12 +45,16 @@ class KMedoidsAlgorithm(object):
         except KeyError:
             random.seed()
 
-        self.condensed_matrix = condensed_matrix
+
+        print "Kmedoids Init "
+
+        # self.condensed_matrix = condensed_matrix
         self.total_elements = condensed_matrix.row_length
         self.class_list = [0]*condensed_matrix.row_length
         self.gromos_clusters_bookkeeping = {}
 
     def perform_clustering(self, kwargs):
+
         """
         Does the actual clustering.
         @param kwargs: Dictionary with this mandatory keys:
@@ -59,6 +63,7 @@ class KMedoidsAlgorithm(object):
                 If seeding type is 'GROMOS', 'seeding_max_cutoff' must be also defined, containing the
                 cutoff that the GROMOS Algorithm will use. Default is EQUIDISTANT
         """
+
         self.k = kwargs["k"]
 
         self.seeding_type =  kwargs["seeding_type"] if "seeding_type" in kwargs else  "EQUIDISTANT"
@@ -187,6 +192,8 @@ class KMedoidsAlgorithm(object):
 
         @return: The initial medoids.
         """
+        from pyRMSD.condensedMatrix import CondensedMatrix
+
         if not seeding_type in self.seeding_types():
             print "[ERROR::SpectralClusteringAlgorithm] Seeding type " ,seeding_type, "is not a correct type. Use one of these instead: ", self.seeding_types()
             exit()
@@ -264,8 +271,4 @@ class KMedoidsAlgorithm(object):
             for c in clusters[0:k]:
                 medoids.append(c.prototype)
             return medoids
-
-
-    def pickle_condensed_matrix(self):
-        self.condensed_matrix = None
 

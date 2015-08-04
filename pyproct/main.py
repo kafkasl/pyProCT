@@ -56,6 +56,8 @@ if __name__ == '__main__':
         print e.message
         exit()
 
+    scheduler = parameters["global"]["control"]["scheduler_type"]
+
     observer = None
     cmd_thread = None
     if options.use_mpi:
@@ -66,6 +68,13 @@ if __name__ == '__main__':
             cmd_thread = CmdLinePrinter(observer)
             cmd_thread.start()
         MPIDriver(observer).run(parameters)
+    elif scheduler == "pyCOMPSs":
+        from pyproct.driver.compssdriver import CompssDriver
+        observer = Observer()
+        if options.print_messages:
+            cmd_thread = CmdLinePrinter(observer)
+            cmd_thread.start()
+        CompssDriver(observer).run(parameters)
     else:
         observer = Observer()
         if options.print_messages:

@@ -52,8 +52,8 @@ class RedundanceElimination(object):
 
         else:
             print "[ERROR Compressor::compress] The compression type does not exist (%s)"%(self.type)
-            exit() 
-        
+            exit()
+
         save_cluster_elements(representatives,
                               pdb_path,
                               data_handler,

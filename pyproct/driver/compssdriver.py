@@ -9,21 +9,21 @@ from pyproct.driver.workspace.workspaceHandler import WorkspaceHandler
 from pyproct.driver.observer.observable import Observable
 from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
 from pyproct.clustering.clustering import Clustering
-from pyproct.clustering.protocol.protocol import ClusteringProtocol
+from pyproct.clustering.protocol.compssprotocol import ClusteringProtocol
 from pyproct.postprocess.postprocessingDriver import PostprocessingDriver
 from pyproct.data.dataDriver import DataDriver
 
-class Driver(Observable):
+class CompssDriver(Observable):
     timer = TimerHandler()
 
     def __init__(self, observer):
-        super(Driver, self).__init__(observer)
+        super(CompssDriver, self).__init__(observer)
         self.generatedFiles = []
 
     @timed_method(timer, "Global")
     def run(self, parameters):
         """
-        Driver's main function.
+        CompssDriver's main function.
         """
         with WorkspaceHandler(parameters["global"]["workspace"], self.observer) as self.workspaceHandler:
             self.save_parameters_file(parameters)
@@ -32,7 +32,7 @@ class Driver(Observable):
 
                 self.data_handler, self.matrix_handler = DataDriver.data_driver_run(    parameters["data"],
                                                                     self.workspaceHandler,
-                                                                    Driver.timer,
+                                                                    CompssDriver.timer,
                                                                     self.generatedFiles)
 
                 if "clustering" in parameters:
@@ -41,6 +41,7 @@ class Driver(Observable):
                     self.save_results(clustering_results)
                     self.show_summary(parameters, clustering_results)
                     return self.get_best_clustering(clustering_results)
+
 
                 else:
                     print "[Warning driver::run] 'clustering' object was not defined in the control script. pyProCT will now stop."
@@ -75,18 +76,18 @@ class Driver(Observable):
     def perform_clustering_exploration(self, parameters):
         best_clustering = None
 
+        clustering_results = ClusteringProtocol(CompssDriver.timer,
+                                               self.observer).run(parameters,
+                                                                  self.matrix_handler,
+                                                                  self.data_handler,
+                                                                  self.workspaceHandler)
 
-        clustering_results = ClusteringProtocol(Driver.timer,
-                                                self.observer).run(parameters,
-                                                                   self.matrix_handler,
-                                                                   self.data_handler,
-                                                                   self.workspaceHandler)
         if clustering_results is not None:
             best_clustering = self.get_best_clustering(clustering_results)
 
         if clustering_results is None or best_clustering is None:
             self.notify("SHUTDOWN", "Improductive clustering search. Relax evaluation constraints.")
-            print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
+            print "[FATAL CompssDriver:get_best_clustering] Improductive clustering search. Exiting..."
             exit()
         else:
             return clustering_results
@@ -122,7 +123,7 @@ class Driver(Observable):
         self.generatedFiles.append({"description":"Results file",
                                     "path":os.path.abspath(results_path),
                                     "type":"text"})
-        json_results = ClusteringResultsGatherer().gather(Driver.timer,
+        json_results = ClusteringResultsGatherer().gather(CompssDriver.timer,
                                                             self.data_handler,
                                                             self.workspaceHandler,
                                                             clustering_results,
