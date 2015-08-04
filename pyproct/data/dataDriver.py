@@ -7,11 +7,15 @@ import os
 from pyproct.data.matrix.matrixCalculator import MatrixCalculator
 from pyproct.data.handler.dataHandler import DataHandler
 from pyproct.driver.time.timerHandler import timed_method
+from pyproct.driver.workspace.workspaceHandler import WorkspaceHandler
 from pyproct.tools import plotTools
+
+from pycompss.api.task import task
 
 class DataDriver(object):
 
     timer = None
+
 
     def __init__(self):
         pass
@@ -25,6 +29,9 @@ class DataDriver(object):
         matrix_handler = cls.calc_matrix(data_handler,
                                          parameters["matrix"])
 
+
+
+
         # Save statistics
         statistics_file_path = matrix_handler.save_statistics(workspace_handler["matrix"])
         generated_files.append({
@@ -32,9 +39,9 @@ class DataDriver(object):
                                 "path":os.path.abspath(statistics_file_path),
                                 "type":"text"
         })
-
         # Save matrix contents
         if "filename" in parameters["matrix"]:
+            print "saving matrix"
             cls.save_matrix(matrix_handler,
                             workspace_handler,
                             parameters["matrix"])

@@ -74,8 +74,7 @@ def build_scheduler(scheduling_options, observer):
         return SerialScheduler(external_functions)
 
     elif scheduler_type == "pyCOMPSs":
-        from pyproct.tools.compssRunner import CompssRunner
-        return CompssRunner(external_functions)
+        return None
 
     else:
         print "[ERROR][ClusteringExplorator::__init__] Not supported scheduler_type ( %s )"%(scheduler_type)

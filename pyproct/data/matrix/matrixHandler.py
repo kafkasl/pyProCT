@@ -6,13 +6,13 @@ Created on 13/02/2013
 from pyRMSD.matrixHandler import MatrixHandler as pyRMSD_MatrixHandler
 
 class MatrixHandler(object):
-    
+
     def __init__(self, distance_matrix, matrix_params):
         """
         Class constructor.
-        
+
         :param distance_matrix: The distance matrix to handle.
-        
+
         :param matrix_parameters: The parameters used to build this matrix.
         """
         self.matrix_parameters = matrix_params
@@ -34,5 +34,5 @@ class MatrixHandler(object):
         @param matrix_base_path: The folder where to save the 'statistics.json' file.
         """
         return pyRMSD_MatrixHandler.save_statistics(matrix_base_path, self.distance_matrix)
-    
+
 
