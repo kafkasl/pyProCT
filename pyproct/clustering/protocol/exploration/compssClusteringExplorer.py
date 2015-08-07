@@ -96,9 +96,7 @@ class ClusteringExplorer(Observable):
             clusterings.append(result)
 
 
-        for c in clusterings:
-            compss_wait_on(c)
-        # Put clusterings inside the structure
+        print "CLusterings %s" % clusterings
         for clustering_id, clustering in clusterings:
             clusterings_info[clustering_id]["clustering"] = clustering
 
@@ -152,8 +150,13 @@ class ClusteringExplorer(Observable):
                 # from pycompss.api.api import compss_wait_on
 
                 # compss_wait_on(result)
+                # print "Waiting on %s (%s)" % result #(result.get_size(), type(result))
+                # from pycompss.api.api import compss_wait_on
+
+                # compss_wait_on(result)
                 # print "Compss Task result: \n%s" % result
                 results.append(result)
+        print "SCHEDULING DONE: \nresults\n %s\nclustering_info:\n %s" % (results, clusterings_info)
 
         return clusterings_info, results
 

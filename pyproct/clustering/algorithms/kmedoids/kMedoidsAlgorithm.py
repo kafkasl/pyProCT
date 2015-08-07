@@ -12,6 +12,8 @@ from pyproct.clustering.clustering import Clustering
 
 
 class KMedoidsAlgorithm(object):
+    from pycompss.api.task import task
+
     """
     K-Means like algorithm with medoids (so that the cluster prototype is always a member of the
     dataset). It has 3 different initial seeding implementations.
@@ -53,6 +55,7 @@ class KMedoidsAlgorithm(object):
         self.class_list = [0]*condensed_matrix.row_length
         self.gromos_clusters_bookkeeping = {}
 
+    @task(returns=tuple)
     def perform_clustering(self, kwargs):
 
         """
@@ -63,6 +66,10 @@ class KMedoidsAlgorithm(object):
                 If seeding type is 'GROMOS', 'seeding_max_cutoff' must be also defined, containing the
                 cutoff that the GROMOS Algorithm will use. Default is EQUIDISTANT
         """
+        from pyRMSD.condensedMatrix import CondensedMatrix
+
+        if "matrix_data" in kwargs:
+            self.condensed_matrix = CondensedMatrix(kwargs["matrix_data"])
 
         self.k = kwargs["k"]
 
@@ -92,6 +99,7 @@ class KMedoidsAlgorithm(object):
 
         algorithm_details = "K-Medoids algorithm with k ="+str(int(self.k))+" and %s initial seeding"%self.seeding_to_str()
         clusters = gen_clusters_from_class_list(self.class_list)
+        self.condensed_matrix = None
         return Clustering(clusters,details = algorithm_details)
 
     def seeding_to_str(self):

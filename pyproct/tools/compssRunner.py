@@ -48,7 +48,6 @@ class CompssTask(object):
         from pyproct.data.matrix.matrixHandler import MatrixHandler
 
         # print "Task_run::Argument[algorithm]: \n%s" % self.kwargs["algorithm"]
-        print "Task_run::Arguments : %s\n" % self.kwargs["algorithm_kwargs"].keys()
 
 
         distance_matrix = CondensedMatrix(self.matrix_data)
@@ -56,7 +55,8 @@ class CompssTask(object):
         # print "ALG: %s" % self.kwargs['algorithm']
         # self.kwargs['algorithm'].__init__(self)
 
-        self.kwargs["algorithm"].condensed_matrix = distance_matrix
+        # self.kwargs["algorithm"].condensed_matrix = distance_matrix
+        self.kwargs["algorithm_kwargs"] = dict(self.kwargs["algorithm_kwargs"].items() + {"matrix_data":self.matrix_data}.items())
         # print "Matrix -------------------\n %s" % distance_matrix.get_data()
         # # self.kwargs["algorithm"].condensed_matrix = matrix_handler
         # # self.kwargs["algorithm"].total_elements = matrix_handler.row_length
@@ -65,5 +65,10 @@ class CompssTask(object):
         # # print "Task_run::Matrix_handler: \n%s" % matrix_handler
         self.result = self.function(**(self.kwargs))
 
+        from pycompss.api.api import compss_wait_on
 
+        compss_wait_on(self.result)
+        print "Waiting on %s (%s)" % self.result
+        # print "Task_run::Arguments : %s\n" % self.kwargs["algorithm_kwargs"].keys()
+        # print "Result %s (%s)" % (self.result, type(self.result))
         return self.result # (clustering_id, clustering)

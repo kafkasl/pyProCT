@@ -3,8 +3,8 @@ Created on 07/02/2013
 
 @author: victor
 """
-from pyscheduler.serialScheduler import SerialScheduler
-from pyscheduler.processParallelScheduler import ProcessParallelScheduler
+# from pyscheduler.serialScheduler import SerialScheduler
+# from pyscheduler.processParallelScheduler import ProcessParallelScheduler
 import time, datetime
 import multiprocessing
 

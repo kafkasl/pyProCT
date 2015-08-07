@@ -91,8 +91,6 @@ class ClusteringExplorer(Observable):
         # Wait until all processes have finished
         clusterings = self.scheduler.run()
 
-        for c in clusterings:
-            compss_wait_on(c)
         # Put clusterings inside the structure
         for clustering_id, clustering in clusterings:
             clusterings_info[clustering_id]["clustering"] = clustering
