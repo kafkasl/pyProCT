@@ -28,7 +28,7 @@ class CompssTask(object):
         # print "PARAMS\n%s\n" % parameters
 
 
-    # @task(returns=tuple)
+    @task(returns=tuple)
     def task_run(self):
         print "STARTING TASK"
 
@@ -64,6 +64,8 @@ class CompssTask(object):
 
         # # print "Task_run::Matrix_handler: \n%s" % matrix_handler
         self.result = self.function(**(self.kwargs))
+
+        self.kwargs["algorithm"].condensed_matrix = None
 
 
         return self.result # (clustering_id, clustering)

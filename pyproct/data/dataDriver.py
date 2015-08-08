@@ -10,7 +10,6 @@ from pyproct.driver.time.timerHandler import timed_method
 from pyproct.driver.workspace.workspaceHandler import WorkspaceHandler
 from pyproct.tools import plotTools
 
-from pycompss.api.task import task
 
 class DataDriver(object):
 

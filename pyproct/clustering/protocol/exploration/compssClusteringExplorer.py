@@ -98,6 +98,8 @@ class ClusteringExplorer(Observable):
 
         for c in clusterings:
             compss_wait_on(c)
+
+        print "Clusterigns: %s" % clusterings
         # Put clusterings inside the structure
         for clustering_id, clustering in clusterings:
             clusterings_info[clustering_id]["clustering"] = clustering

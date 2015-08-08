@@ -79,8 +79,6 @@ class ClusteringExplorer(Observable):
         @return: A dictionary 'clustering_info' structures indexed by clustering ID. Each of these structures
         contains one generated clustering as well as the algorithm type and parameters used to get it.
         """
-        from pycompss.api.api import compss_wait_on
-
         used_algorithms = self.clustering_parameters["algorithms"].keys()
 
         # Generate all clustering + info structures
@@ -91,8 +89,6 @@ class ClusteringExplorer(Observable):
         # Wait until all processes have finished
         clusterings = self.scheduler.run()
 
-        for c in clusterings:
-            compss_wait_on(c)
         # Put clusterings inside the structure
         for clustering_id, clustering in clusterings:
             clusterings_info[clustering_id]["clustering"] = clustering
