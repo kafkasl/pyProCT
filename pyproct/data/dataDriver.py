@@ -29,8 +29,6 @@ class DataDriver(object):
                                          parameters["matrix"])
 
 
-
-
         # Save statistics
         statistics_file_path = matrix_handler.save_statistics(workspace_handler["matrix"])
         generated_files.append({
@@ -40,7 +38,6 @@ class DataDriver(object):
         })
         # Save matrix contents
         if "filename" in parameters["matrix"]:
-            print "saving matrix"
             cls.save_matrix(matrix_handler,
                             workspace_handler,
                             parameters["matrix"])

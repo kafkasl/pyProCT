@@ -12,6 +12,7 @@ from pyproct.clustering.algorithms.random.RandomAlgorithm import RandomClusterin
 from pyproct.clustering.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
 
 from pyproct.tools.compssRunner import CompssTask
+
 from pycompss.api.task import task
 
 def run_algorithm(algorithm, algorithm_kwargs, clustering_id):
@@ -26,6 +27,7 @@ def run_algorithm(algorithm, algorithm_kwargs, clustering_id):
     @param clustering_id: An id used to define the resulting clustering.
     """
     clustering = algorithm.perform_clustering(algorithm_kwargs)
+    print "Run algorithm [%s,%s]" % (clustering_id, clustering)
     return (clustering_id, clustering)
 
 class ClusteringExplorer(Observable):
@@ -72,6 +74,7 @@ class ClusteringExplorer(Observable):
         self.current_clustering_id = 0
         self.parameters_generator = parameters_generator
 
+
     def run(self):
         """
         Executes the whole exploration pipeline:
@@ -89,17 +92,18 @@ class ClusteringExplorer(Observable):
         # Generate all clustering + info structures
         clusterings_info = {}
         clusterings = []
+        c_info = None
+        result = None
         for algorithm_type in used_algorithms:
             c_info, result = self.schedule_algorithm(algorithm_type)
 
             clusterings_info = dict(clusterings_info.items() + c_info.items())# append elements to a dict
-            clusterings.append(result)
+            clusterings.extend(result)
+
+        for i in xrange(0, len(clusterings)):
+            clusterings[i] = compss_wait_on(clusterings[i])
 
 
-        for c in clusterings:
-            compss_wait_on(c)
-
-        print "Clusterigns: %s" % clusterings
         # Put clusterings inside the structure
         for clustering_id, clustering in clusterings:
             clusterings_info[clustering_id]["clustering"] = clustering
@@ -126,7 +130,7 @@ class ClusteringExplorer(Observable):
         auto_parameter_generation = True if not "parameters" in algorithm_data else False
 
         if auto_parameter_generation:
-            print "Generating params for", algorithm_type
+            # print "Generating params for", algorithm_type
             algorithm_run_params, clusterings =  self.parameters_generator.get_parameters_for_type(algorithm_type)
         else:
             # A list with all the parameters for diverse runs
@@ -134,12 +138,14 @@ class ClusteringExplorer(Observable):
 
         clusterings_info =  self.generate_clustering_info(algorithm_type, algorithm_run_params, clusterings)
 
+        from pycompss.api.api import compss_wait_on
         # Sometimes getting the best parameters imply getting the clusterings themselves
         results = []
         if clusterings == []:
             for clustering_id in clusterings_info:
                 one_clustering_info = clusterings_info[clustering_id]
 
+                # print "Calling task run for %s" % run_algorithm
                 result = CompssTask(name = clustering_id,
                             matrix_data = self.matrix_handler.distance_matrix.get_data(),
                             description = "Generation of clustering with %s \
@@ -151,10 +157,7 @@ class ClusteringExplorer(Observable):
                                        "clustering_id":clustering_id,
                                        "algorithm_kwargs":one_clustering_info["parameters"]
                                        }).task_run()
-                # from pycompss.api.api import compss_wait_on
 
-                # compss_wait_on(result)
-                # print "Compss Task result: \n%s" % result
                 results.append(result)
 
         return clusterings_info, results

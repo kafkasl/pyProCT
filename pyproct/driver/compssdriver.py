@@ -10,7 +10,7 @@ from pyproct.driver.observer.observable import Observable
 from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
 from pyproct.clustering.clustering import Clustering
 from pyproct.clustering.protocol.compssprotocol import ClusteringProtocol
-from pyproct.postprocess.postprocessingDriver import PostprocessingDriver
+from pyproct.postprocess.compssPostprocessingDriver import PostprocessingDriver
 from pyproct.data.dataDriver import DataDriver
 
 class CompssDriver(Observable):
@@ -112,10 +112,9 @@ class CompssDriver(Observable):
     def postprocess(self, parameters, clustering_results):
         best_clustering = self.get_best_clustering(clustering_results)["clustering"]
         PostprocessingDriver().run(best_clustering,
-                                   parameters["postprocess"],
+                                   parameters,
                                    self.data_handler,
-                                   self.workspaceHandler,
-                                   self.matrix_handler,
+                                   self.matrix_handler.distance_matrix.get_data(),
                                    self.generatedFiles)
 
     def save_results(self, clustering_results):
