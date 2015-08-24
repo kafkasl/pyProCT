@@ -12,6 +12,8 @@ from pyproct.driver.parameters import ProtocolParameters
 from pyproct.driver.observer.observer import Observer
 from pyproct.driver.driver import Driver
 import pyproct.tools.commonTools as tools
+import subprocess
+import sys
 
 class CmdLinePrinter(threading.Thread):
 
@@ -33,6 +35,37 @@ class CmdLinePrinter(threading.Thread):
             print self.data_source.get_data()
             self.data_source.clear()
 
+def read_params(json_script):
+    try:
+        parameters = ProtocolParameters.get_params_from_json(tools.remove_comments(open(json_script).read()))
+        parameters["global"]["workspace"]["base"] = os.path.abspath(parameters["global"]["workspace"]["base"])
+    except ValueError, e:
+        print "Malformed json script."
+        print e.message
+        exit()
+    return parameters
+
+
+def runcompss_pyproct(json_script):
+    control_script = os.path.realpath(json_script)
+    print "Script %s" % control_script
+    main_file = __file__
+    classpath = os.path.dirname(main_file)
+    print "File %s Classpath %s" % (main_file, classpath)
+    subprocess.check_call(["runcompss", "--lang=python", "--monitoring", "--debug",
+        "--classpath=%s" % classpath,
+        main_file,
+       control_script,
+        "pyCOMPSs"])
+
+def mpirun_pyproct(json_script, threads_num):
+    if not threads_num:
+        import multiprocessing
+        threads_num = multiprocessing.cpu_count()
+        subprocess.check_call(["mpirun", "-np", threads_num, "-m",
+            "pyproct.main", json_script, "MPI"])
+
+
 if __name__ == '__main__':
     parser = optparse.OptionParser(usage='%prog [--mpi] [--print] script', version=pyproct.__version__)
 
@@ -45,21 +78,49 @@ if __name__ == '__main__':
         parser.error("You need to specify the script to be executed.")
 
     json_script = args[0]
+    parameters = read_params(json_script)
 
-    parameters = None
     try:
-        parameters = ProtocolParameters.get_params_from_json(tools.remove_comments(open(json_script).read()))
-        parameters["global"]["workspace"]["base"] = os.path.abspath(parameters["global"]["workspace"]["base"])
-    except ValueError, e:
-        print "Malformed json script."
-        print e.message
-        exit()
+        mode = args[1]
+    except Exception, e:
+        mode = "main"
 
-    scheduler = parameters["global"]["control"]["scheduler_type"]
 
-    observer = None
-    cmd_thread = None
-    if options.use_mpi:
+    print "MODE: %s" % mode
+
+
+    if mode == "main":
+
+        scheduler = parameters["global"]["control"]["scheduler_type"]
+
+        observer = None
+        cmd_thread = None
+        if scheduler == "MPI/Parallel":
+            try:
+                threads_num = parameters["global"]["control"]["number_of_processes"]
+            except Exception, e:
+                threads_num = None
+            mpirun_compss(json_script, threads_num)
+        elif scheduler == "pyCOMPSs":
+            runcompss_pyproct(json_script)
+        else:
+            observer = Observer()
+            if options.print_messages:
+                cmd_thread = CmdLinePrinter(observer)
+                cmd_thread.start()
+            Driver(observer).run(parameters)
+
+        if options.print_messages:
+            cmd_thread.stop()
+
+    elif mode == "pyCOMPSs":
+        from pyproct.driver.compssdriver import CompssDriver
+        observer = Observer()
+        if options.print_messages:
+            cmd_thread = CmdLinePrinter(observer)
+            cmd_thread.start()
+        CompssDriver(observer).run(parameters)
+    elif mode == "MPI":
         from pyproct.driver.mpidriver import MPIDriver
         from pyproct.driver.observer.MPIObserver import MPIObserver
         observer = MPIObserver()
@@ -67,19 +128,4 @@ if __name__ == '__main__':
             cmd_thread = CmdLinePrinter(observer)
             cmd_thread.start()
         MPIDriver(observer).run(parameters)
-    elif scheduler == "pyCOMPSs":
-        from pyproct.driver.compssdriver import CompssDriver
-        observer = Observer()
-        if options.print_messages:
-            cmd_thread = CmdLinePrinter(observer)
-            cmd_thread.start()
-        CompssDriver(observer).run(parameters)
-    else:
-        observer = Observer()
-        if options.print_messages:
-            cmd_thread = CmdLinePrinter(observer)
-            cmd_thread.start()
-        Driver(observer).run(parameters)
 
-    if options.print_messages:
-        cmd_thread.stop()
