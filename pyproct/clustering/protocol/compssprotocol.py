@@ -32,7 +32,6 @@ class ClusteringProtocol(Observable):
                                                                             matrix_handler),
                                             self.observer).run()
 
-        print "clusterings: \n\n%s" % clusterings
         self.notify("Clusterings Created", {"number_of_clusters":len(clusterings)})
         self.timer.stop("Clustering Exploration")
 

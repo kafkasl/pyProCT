@@ -46,8 +46,6 @@ class KMedoidsAlgorithm(object):
             random.seed()
 
 
-        print "Kmedoids Init "
-
         self.condensed_matrix = condensed_matrix
         self.total_elements = condensed_matrix.row_length
         self.class_list = [0]*condensed_matrix.row_length

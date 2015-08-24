@@ -48,11 +48,9 @@ def read_params(json_script):
 
 def runcompss_pyproct(json_script):
     control_script = os.path.realpath(json_script)
-    print "Script %s" % control_script
     main_file = __file__
     classpath = os.path.dirname(main_file)
-    print "File %s Classpath %s" % (main_file, classpath)
-    subprocess.check_call(["runcompss", "--lang=python", "--monitoring", "--debug",
+    subprocess.check_call(["runcompss", "--lang=python",
         "--classpath=%s" % classpath,
         main_file,
        control_script,
@@ -84,9 +82,6 @@ if __name__ == '__main__':
         mode = args[1]
     except Exception, e:
         mode = "main"
-
-
-    print "MODE: %s" % mode
 
 
     if mode == "main":
