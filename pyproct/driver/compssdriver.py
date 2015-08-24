@@ -12,6 +12,7 @@ from pyproct.clustering.clustering import Clustering
 from pyproct.clustering.protocol.compssprotocol import ClusteringProtocol
 from pyproct.postprocess.compssPostprocessingDriver import PostprocessingDriver
 from pyproct.data.dataDriver import DataDriver
+from pyproct.driver.driver import Driver
 
 class CompssDriver(Observable):
     timer = TimerHandler()
@@ -159,6 +160,5 @@ class CompssDriver(Observable):
             print "\t- Quality function results: "
             for qual_func in best_clustering['evaluation']:
                 if not qual_func in ['Number of clusters','Noise level', 'Mean cluster size'] and not "Normalized_" in qual_func:
-                    print "Type[%s], Value[%s]" % (type(best_clustering['evaluation'][qual_func]), best_clustering['evaluation'][qual_func])
                     print "\t\t- %s: %s"%(qual_func, best_clustering['evaluation'][qual_func])
         print "======================="

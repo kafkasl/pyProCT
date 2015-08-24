@@ -8,9 +8,9 @@ from pyproct.data.matrix.protein.cases.euclidean.dihedralsCase import DihedralEu
 from pyproct.data.matrix.protein.cases.euclidean.cartesiansCase import euclideanDistanceBuilder
 
 class EuclideanMatrixCalculator(object):
-    
+
     CALCULATION_METHOD = "euclidean_distance::ensemble"
-    
+
     def __init__(self):
         pass
 
@@ -25,21 +25,19 @@ class EuclideanMatrixCalculator(object):
 
         @return: The created distance matrix.
         """
-        
+
         coords_type = matrix_parameters.get_value("type", default_value="COORDINATES")
         builder = None
-        
+
         if coords_type == "COORDINATES":
-            print "using coords"
             builder = euclideanDistanceBuilder
-            
+
         elif coords_type == "DIHEDRALS":
-            print "using dihedrals"
             builder = DihedralEuclideanDistanceBuilder
 
         coordinates = builder.build(data_handler,  matrix_parameters)
         distances = builder.calc_distances(coordinates)
-        
+
         return CondensedMatrix(distances)
 
-    
+

@@ -62,8 +62,8 @@ def mpirun_pyproct(json_script, threads_num):
     if not threads_num:
         import multiprocessing
         threads_num = multiprocessing.cpu_count()
-        subprocess.check_call(["mpirun", "-np", threads_num, "-m",
-            "pyproct.main", json_script, "MPI"])
+    subprocess.check_call(["mpirun", "-np", "%s" % threads_num,"python", "-m",
+        "pyproct.main", json_script, "MPI"])
 
 
 if __name__ == '__main__':
@@ -100,7 +100,7 @@ if __name__ == '__main__':
                 threads_num = parameters["global"]["control"]["number_of_processes"]
             except Exception, e:
                 threads_num = None
-            mpirun_compss(json_script, threads_num)
+            mpirun_pyproct(json_script, threads_num)
         elif scheduler == "pyCOMPSs":
             runcompss_pyproct(json_script)
         else:
