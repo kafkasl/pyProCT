@@ -35,7 +35,6 @@ class HierarchicalClusteringAlgorithm(object):
         The method is the method used to determine distances when fusing clusters. methods are described in:
         http://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
         """
-        print "Hierarchical exploration started"
         try:
             cutoff = kwargs["cutoff"]
         except KeyError:

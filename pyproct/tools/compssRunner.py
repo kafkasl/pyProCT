@@ -30,24 +30,18 @@ class CompssTask(object):
 
     @task(returns=tuple)
     def task_run(self):
-        print "STARTING TASK"
 
         """
         Runs the task's associated callable and returns its result.
         @return: The result of the callable execution.
         """
 
-
         from pyRMSD.condensedMatrix import CondensedMatrix
-        print "Task_run::Arguments : %s\n" % self.kwargs["algorithm_kwargs"].keys()
 
-
-        distance_matrix = CondensedMatrix(self.matrix_data)
-
+        distance_matrix = CondensedMatrix(self.matrix_data.view('float64'))
 
         self.kwargs["algorithm"].condensed_matrix = distance_matrix
 
-        print "Calling function: %s" % self.function
         self.result = self.function(**(self.kwargs))
 
         self.kwargs["algorithm"].condensed_matrix = None

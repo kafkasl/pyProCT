@@ -98,15 +98,16 @@ class ClusteringExplorer(Observable):
             c_info, result = self.schedule_algorithm(algorithm_type)
 
             clusterings_info = dict(clusterings_info.items() + c_info.items())# append elements to a dict
-            clusterings.extend(result)
+            clusterings.append(result)
 
-        for i in xrange(0, len(clusterings)):
-            clusterings[i] = compss_wait_on(clusterings[i])
+        for i, clustering in enumerate(clusterings):
+                clusterings[i] = compss_wait_on(clustering)
 
 
         # Put clusterings inside the structure
-        for clustering_id, clustering in clusterings:
-            clusterings_info[clustering_id]["clustering"] = clustering
+        for elem in clusterings:
+            for clustering_id, clustering in elem:
+                clusterings_info[clustering_id]["clustering"] = clustering
 
         return clusterings_info
 
@@ -138,7 +139,6 @@ class ClusteringExplorer(Observable):
 
         clusterings_info =  self.generate_clustering_info(algorithm_type, algorithm_run_params, clusterings)
 
-        from pycompss.api.api import compss_wait_on
         # Sometimes getting the best parameters imply getting the clusterings themselves
         results = []
         if clusterings == []:
