@@ -9,7 +9,6 @@ def sq_distance(a,b):
     return (a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2
 
 def angular_rmsd(a,b):
-    print "Type: %s" % type(a)
     return math.sqrt((angular_increment(a-b)**2).sum()/len(a))
 
 def to_0_2PI_range(angle):

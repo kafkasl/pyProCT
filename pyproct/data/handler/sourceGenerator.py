@@ -20,7 +20,6 @@ class SourceGenerator(object):
     @classmethod
     def inflate_source_list(cls, source_list):
         inflated_list = []
-        print "Inflate source list = %s" % source_list
         for source in source_list:
 
             if isinstance(source, basestring):
@@ -47,9 +46,7 @@ class SourceGenerator(object):
     @classmethod
     def do_glob(cls, path):
         paths = glob.glob(path)
-        print "Do_glob [path] : %s" % path
         if len(paths) > 0:
-            print "Returning paths"
             return paths
         else:
             print "[ERROR SourceGenerator::init] Impossible to find one or all of this files: %s"%path
@@ -79,7 +76,6 @@ class SourceGenerator(object):
         :return: An array with the same array or more in case it was inflated.
         """
         inflated_dics = []
-        print "get_sources_from_dictionary [info_dict]= %s" % info_dict
         for path in cls.do_glob(info_dict["source"]):
             clone = copy.deepcopy(info_dict)
             clone["source"] = path
