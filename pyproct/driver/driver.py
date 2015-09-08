@@ -139,6 +139,11 @@ class Driver(Observable):
         not_selected = clustering_results[2]
         best_clustering = self.get_best_clustering(clustering_results)
 
+        # for clustering in selected.values():
+        #     print "%s %s" % (clustering["clustering"].total_number_of_elements, clustering["parameters"])
+        # for clustering in not_selected.values():
+        #     print "%s %s" % (clustering["clustering"].total_number_of_elements, clustering["parameters"])
+
         print "======================="
         print "Summary:"
         print "--------"

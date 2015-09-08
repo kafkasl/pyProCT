@@ -115,7 +115,6 @@ class ClusteringExplorer(Observable):
         auto_parameter_generation = True if not "parameters" in algorithm_data else False
 
         if auto_parameter_generation:
-            print "Generating params for", algorithm_type
             algorithm_run_params, clusterings =  self.parameters_generator.get_parameters_for_type(algorithm_type)
         else:
             # A list with all the parameters for diverse runs

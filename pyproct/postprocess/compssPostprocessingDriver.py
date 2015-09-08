@@ -19,12 +19,12 @@ class PostprocessingDriver(object):
         pass
 
     @task()
-    def run(self, clustering, parameters, data_handler, matrix_data, generatedFiles):
-      with WorkspaceHandler(parameters["global"]["workspace"], None) as workspaceHandler:
+    def run(self, clustering, parameters, data_handler, matrix_data, generated_files):
+      with WorkspaceHandler(parameters["global"]["workspace"], None) as workspace_handler:
         postprocessing_parameters = parameters["postprocess"]
         if "data" in parameters:
             data_handler = DataDriver.load_data(parameters["data"])
-            matrix_handler = MatrixHandler(CondensedMatrix(matrix_data), parameters["data"]["matrix"])
+            matrix_handler = MatrixHandler(CondensedMatrix(matrix_data.view('float64')), parameters["data"]["matrix"])
 
             available_action_classes = PluginHandler.get_classes('pyproct.postprocess.actions',
                                                                     "PostAction",

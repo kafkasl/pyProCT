@@ -23,6 +23,14 @@ class MatrixCalculator(object):
 
         try:
             distance_matrix = calculator_class.calculate(data_handler, matrix_params["parameters"])
+            import sys
+            print "Matrix nbytes: %s bytes" % distance_matrix.get_data().nbytes
+            print "Shape %s" % distance_matrix.get_data().shape
+            print "Length %s" % len(distance_matrix.get_data())
+            print "Type: %s" % type(distance_matrix.get_data()[0])
+            print "Size of %s" % sys.getsizeof(distance_matrix.get_data()[0])
+            print "Item size %s" % distance_matrix.get_data()[0].itemsize
+            print distance_matrix.row_length
         except Exception, e:
             print "[ERROR][Driver::postprocess] Impossible to perform matrix calculation for method: %s"%(calculator_class.CALCULATION_METHOD)
             print "Message: %s"%str(e)

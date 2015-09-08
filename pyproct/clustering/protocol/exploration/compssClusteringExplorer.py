@@ -103,10 +103,15 @@ class ClusteringExplorer(Observable):
         for i, clustering in enumerate(clusterings):
                 clusterings[i] = compss_wait_on(clustering)
 
+        for c in clusterings_info:
+            print "%s" % (c)
+        for ci in clusterings_info:
+            print "%s" % (ci)
 
         # Put clusterings inside the structure
         for elem in clusterings:
             for clustering_id, clustering in elem:
+                print "%s = %s" % (clustering_id, clustering.clusters[0].id)
                 clusterings_info[clustering_id]["clustering"] = clustering
 
         return clusterings_info

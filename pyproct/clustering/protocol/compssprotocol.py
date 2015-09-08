@@ -35,6 +35,7 @@ class ClusteringProtocol(Observable):
         self.notify("Clusterings Created", {"number_of_clusters":len(clusterings)})
         self.timer.stop("Clustering Exploration")
 
+
         ######################
         # First filtering
         ######################
