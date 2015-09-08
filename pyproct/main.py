@@ -50,7 +50,7 @@ def runcompss_pyproct(json_script):
     control_script = os.path.realpath(json_script)
     main_file = __file__
     classpath = os.path.dirname(main_file)
-    subprocess.check_call(["runcompss", "--lang=python", "-d",
+    subprocess.check_call(["runcompss", "--lang=python", "-d", "--tracing",
         "--classpath=%s" % classpath,
         main_file,
        control_script,
