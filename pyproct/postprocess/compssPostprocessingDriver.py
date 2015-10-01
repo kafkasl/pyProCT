@@ -18,7 +18,26 @@ class PostprocessingDriver(object):
     def __init__(self):
         pass
 
+
     @task()
+    def postprocess(self, clustering, parameters,
+                           data_handler, workspace_handler, matrix_data,
+                           generated_files, postprocessing_action_class, postprocessing_parameters):
+      matrix_handler = MatrixHandler(CondensedMatrix(matrix_data.view('float64')), parameters["data"]["matrix"])
+      if postprocessing_action_class.KEYWORD in postprocessing_parameters:
+          try:
+              postprocessing_action_class().run(clustering,
+                                        postprocessing_parameters[postprocessing_action_class.KEYWORD],
+                                        data_handler,
+                                        workspace_handler,
+                                        matrix_handler,
+                                        generated_files)
+          except Exception, e:
+              print "[ERROR][Driver::postprocess] Impossible to perform '%s' postprocessing action."%(postprocessing_action_class.KEYWORD)
+              print "Message: %s"%str(e)
+              traceback.print_exc()
+
+
     def run(self, clustering, parameters, data_handler, matrix_data, generated_files):
       with WorkspaceHandler(parameters["global"]["workspace"], None) as workspace_handler:
         postprocessing_parameters = parameters["postprocess"]
@@ -32,15 +51,6 @@ class PostprocessingDriver(object):
                                                                     "postprocess")
 
             for postprocessing_action_class in available_action_classes:
-                if postprocessing_action_class.KEYWORD in postprocessing_parameters:
-                    try:
-                        postprocessing_action_class().run(clustering,
-                                                  postprocessing_parameters[postprocessing_action_class.KEYWORD],
-                                                  data_handler,
-                                                  workspace_handler,
-                                                  matrix_handler,
-                                                  generated_files)
-                    except Exception, e:
-                        print "[ERROR][Driver::postprocess] Impossible to perform '%s' postprocessing action."%(postprocessing_action_class.KEYWORD)
-                        print "Message: %s"%str(e)
-                        traceback.print_exc()
+              self.postprocess(clustering, parameters,
+                           data_handler, workspace_handler, matrix_data,
+                           generated_files, postprocessing_action_class, postprocessing_parameters)
